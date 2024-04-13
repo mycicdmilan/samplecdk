@@ -1,5 +1,5 @@
 import * as cdk from "aws-cdk-lib";
-import { IntuLambdaFn } from "./intu-lambda";
+import { ntuLambdaFn } from "./ntu-lambda";
 import { vpcFromContext } from "./vpc";
 import  * as lambdadata  from "../resource_configs/lambda_config.json"
 import { aws_iam as iam } from "aws-cdk-lib";
@@ -36,7 +36,7 @@ export class CdkStack extends cdk.Stack {
    
     const function_name = Object.keys(lambdadata)
     type LambdaNameType = typeof function_name[number]
-    type LambdaFnsType = { [key in LambdaNameType]: IntuLambdaFn}
+    type LambdaFnsType = { [key in LambdaNameType]: ntuLambdaFn}
     type lambdaFnsConfigType = { [key in LambdaNameType]: { name: string, code: string, timeout: number, memsize: number, runtime: string, lambdaRole: string | null, lambdaHandler: string, env_var:{[key: string]: string}} };
     const lambdaFnConfig: lambdaFnsConfigType = lambdadata
     let lambdaRole: iam.IRole = iam.Role.fromRoleArn(this,'Role',`arn:aws:iam::${props.env?.account}:role/${props.environmentVars?.lambda_iamrole}`);
@@ -54,7 +54,7 @@ export class CdkStack extends cdk.Stack {
         if (lambdaFnConfig[fnName].lambdaRole != null)
           assignedLambdaRole = iam.Role.fromRoleArn(this,'role-'+lambdaFnConfig[fnName].lambdaRole,`arn:aws:iam::${props.env?.account}:role/${lambdaFnConfig[fnName].lambdaRole}`)
         
-        let fn = new IntuLambdaFn(this, lambdaFnConfig[fnName].name, {
+        let fn = new ntuLambdaFn(this, lambdaFnConfig[fnName].name, {
           functionName: lambdaFnConfig[fnName].name,
           assetId: props.assetId,
           timeout: cdk.Duration.seconds(lambdaFnConfig[fnName].timeout),
@@ -191,7 +191,7 @@ export class CdkStack extends cdk.Stack {
     
     
 /*
-    new IntuLambdaFn(this, 'AppLambda', {
+    new ntuLambdaFn(this, 'AppLambda', {
       functionName: undefined,
       assetId: props.assetId,
       gitOrg: props.gitOrg,
